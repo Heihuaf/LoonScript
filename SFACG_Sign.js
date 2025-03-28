@@ -29,7 +29,7 @@ function prepareRequest(credentials){
     const body = {
         signDate: getSignDate()
     };
-    log(`nody:${signDate}`)
+    log(`nody:${body}`)
 
     const headers = {
         "accept": "application/vnd.sfacg.api+json;version=1",

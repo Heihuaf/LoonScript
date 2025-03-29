@@ -13,11 +13,11 @@ function loadCredentials() {
     log($persistentStore.read("sfacg_data"));
     const headers = {
         "accept": sfacgData.accept,
-        // contentType: sfacgData.contentType,
+        // "contentType": sfacgData.contentType,
         "cookie": sfacgData.cookie,
         "sfsecurity": sfacgData.sfSecurity,
         "authorization": sfacgData.authorization,
-        //"user-agent": sfacgData.userAgent
+        "user-agent": sfacgData.userAgent
     };
 
     return headers;

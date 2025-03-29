@@ -49,7 +49,7 @@ function getCookie() {
         "cookie": headers.cookie,
         "authorization": headers.authorization,
         "sfSecurity": headers.sfsecurity,
-        // "userAgent": headers["user-agent"]
+        "userAgent": headers["user-agent"]
     };
     let updated = 0;
 
@@ -65,7 +65,7 @@ function getCookie() {
     $persistentStore.write(JSON.stringify(sfacgData), "sfacg_data");
     log(`保存到sfacgdata:${JSON.stringify(sfacgData)}\n`);
 
-    if (updated === 3) {
+    if (updated === 5) {
         notify("✅菠萝包轻小说获取Cookie成功", `日期: ${getCurrentTime()}`);
         log(`获取成功，时间 ${getCurrentTime()}`)
         $done({});

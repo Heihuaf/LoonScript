@@ -45,7 +45,7 @@ function getCookie() {
     log(`请求头: ${JSON.stringify(headers)}`);
     
     const sfacgData = {
-        // "accept": headers.accept,
+        "accept": headers.accept,
         "cookie": headers.cookie,
         "authorization": headers.authorization,
         "sfSecurity": headers.sfsecurity,

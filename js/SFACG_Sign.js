@@ -12,7 +12,7 @@ function loadCredentials() {
     const sfacgData = JSON.parse($persistentStore.read("sfacg_data"));
     log($persistentStore.read("sfacg_data"));
     const headers = {
-        // accept: sfacgData.accept,
+        "accept": sfacgData.accept,
         // contentType: sfacgData.contentType,
         "cookie": sfacgData.cookie,
         "sfsecurity": sfacgData.sfSecurity,

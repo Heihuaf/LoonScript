@@ -88,8 +88,8 @@ function handleSignResult(error, response, data) {
             
             log(`准备调用getCoupon函数查询代券`);
             getCoupon(function(result){
-                log(`getCoupon回调函数执行，结果: ${result}`);
-                notify("今日已经签到过了",`剩余有效代券:${result}`);
+                log(`getCoupon回调函数执行，结果: ${result.coupons}`);
+                notify("今日已经签到过了",`剩余有效代券:${result.coupons}`);
 
                 $done({});
             });
@@ -171,13 +171,16 @@ function getCoupon(callback){
                         break;
                     }
                     coupons += (coupon.coupon - coupon.usedCoupon);
-                    expirationTime = coupon.getDate;
+                    expirationTime = coupon.expireDate.replace("T", " ");
                 }
 
 
                 log(`剩余有效代券: ${coupons}`);
                 log(`最近的代券过期日期: ${expirationTime}`);
-                callback(coupons);
+                callback({
+                    coupons: coupons,
+                    expirationTime: expirationTime
+                });
                 
             }catch(e){
                 log(`代券回调处理出错: ${e.message}`);

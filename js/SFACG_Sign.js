@@ -75,7 +75,7 @@ function handleSignResult(error, response, data) {
 
             if (rewards && rewards.length > 0) {
                 rewards.forEach(reward => {
-                    rewardText += `${reward.num}${reward.name}\n`
+                    rewardText += `${reward.num}${reward.name}`
                 });
 
                 notify("签到成功", `获得奖励:${rewardText}`);
@@ -156,7 +156,6 @@ function getCoupon(callback){
                 log(`响应数据: ${data.substring(0,50)}...`);
 
                 const result = JSON.parse(data).data;
-                let coupons = 0;
 
                 if(!result || !Array.isArray(result)){
                     log(`解析结果异常: ${JSON.stringify(result)}`);
@@ -164,11 +163,20 @@ function getCoupon(callback){
                     return;
                 }
 
-                result.forEach(coupon => {
+                let coupons = 0;
+                let expirationTime = "";
+                for (let i = 0; i < result.length; i++) {
+                    const coupon = result[i];
+                    if(coupon.usedCoupon === coupon.coupon){
+                        break;
+                    }
                     coupons += (coupon.coupon - coupon.usedCoupon);
-                });
+                    expirationTime = coupon.getDate;
+                }
+
 
                 log(`剩余有效代券: ${coupons}`);
+                log(`最近的代券过期日期: ${expirationTime}`);
                 callback(coupons);
                 
             }catch(e){

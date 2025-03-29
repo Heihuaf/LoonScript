@@ -207,7 +207,7 @@ function getCoupon(callback){
                     }
                     coupons += (coupon.coupon - coupon.usedCoupon);
                     expirationDate = coupon.expireDate.replace("T", " ");
-                    expireCoupons += (coupon.coupon - coupon.usedCoupon);
+                    expireCoupons = (coupon.coupon - coupon.usedCoupon);
                 }
 
 

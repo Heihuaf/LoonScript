@@ -59,7 +59,7 @@ function handleSignResult(error, response, data) {
     }
 
     // log(`error:${error}`);
-    // log(`response:${JSON.stringify(response)}`);
+    log(`response:${JSON.stringify(response)}`);
     // log(`data:${data}`);
 
     log(`签到响应: ${data}`);

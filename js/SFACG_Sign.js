@@ -77,8 +77,10 @@ function handleSignResult(error, response, data) {
                 rewards.forEach(reward => {
                     rewardText += `${reward.num}${reward.name}`
                 });
-
-                notify("签到成功", `获得奖励:${rewardText}`);
+                getCoupon(function(result){
+                log(`getCoupon回调函数执行，结果: ${result.coupons}`);
+                notify(`签到成功,获得奖励:${rewardText}`, `剩余有效代券:${result.coupons}`);
+                });
             }// else{
             //     notify("签到成功", "无奖励");
             // }

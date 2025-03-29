@@ -79,7 +79,7 @@ function handleSignResult(error, response, data) {
                 });
                 getCoupon(function(result){
                 log(`getCoupon回调函数执行，结果: ${result.coupons}`);
-                notify(`签到成功,获得奖励:${rewardText}`, `剩余有效代券:${result.coupons}`);
+                notify(`签到成功,获得奖励:${rewardText}`, `剩余有效代券:${result.coupons},最近过期:${result.expireCoupons}代券(${expirationTime})`);
                 });
             }// else{
             //     notify("签到成功", "无奖励");
@@ -91,7 +91,7 @@ function handleSignResult(error, response, data) {
             log(`准备调用getCoupon函数查询代券`);
             getCoupon(function(result){
                 log(`getCoupon回调函数执行，结果: ${result.coupons}`);
-                notify("今日已经签到过了",`剩余有效代券:${result.coupons}`);
+                notify(`今日已经签到过了,剩余有效代券:${result.coupons}`,`最近过期:${expireCoupons}代券(${expriationTime})`);
 
                 $done({});
             });
@@ -167,6 +167,7 @@ function getCoupon(callback){
 
                 let coupons = 0;
                 let expirationTime = "";
+                let expireCoupons = 0;
                 for (let i = 0; i < result.length; i++) {
                     const coupon = result[i];
                     if(coupon.usedCoupon === coupon.coupon){
@@ -174,6 +175,7 @@ function getCoupon(callback){
                     }
                     coupons += (coupon.coupon - coupon.usedCoupon);
                     expirationTime = coupon.expireDate.replace("T", " ");
+                    expireCoupons += (coupon.coupon - coupon.usedCoupon);
                 }
 
 
@@ -181,7 +183,8 @@ function getCoupon(callback){
                 log(`最近的代券过期日期: ${expirationTime}`);
                 callback({
                     coupons: coupons,
-                    expirationTime: expirationTime
+                    expirationTime: expirationTime,
+                    expireCoupons: expireCoupons
                 });
                 
             }catch(e){

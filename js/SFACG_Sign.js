@@ -91,7 +91,7 @@ function handleSignResult(error, response, data) {
             log(`准备调用getCoupon函数查询代券`);
             getCoupon(function(result){
                 log(`getCoupon回调函数执行，结果: ${result.coupons}`);
-                notify(`今日已经签到过了,剩余有效代券:${result.coupons}`,`最近过期:${result.expireCoupons}代券(${result.expriationTime})`);
+                notify(`今日已经签到过了,剩余有效代券:${result.coupons}`,`最近过期:${result.expireCoupons}代券(${result.expirationTime})`);
 
                 $done({});
             });

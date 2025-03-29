@@ -1,4 +1,19 @@
-// Date:2025-03-29 13:38:10
+/**
+ * 脚本名称: 菠萝包轻小说自动签到
+ * 脚本作者: Heihuaf
+ * 更新日期: 2025-03-29 17:36:26
+ * 脚本功能: 菠萝包轻小说自动签到
+ * 触发方式: cron "30 9/21 * * *" script-path=./sfacg_sign.js
+ * 
+ * 使用说明:
+ * 1. 在Loon添加插件并更新，打开菠萝包轻小说APP-点击书架&右下角头像-点击右上方“签到”
+ * 2. 确保菠萝包轻小说有登录账号
+ * 
+ * 更新记录:
+ * 2025-03-29: v1.0.0 初始版本发布
+ * 
+ */
+
 // 日志函数
 function log(message) {
     console.log(`[日志] ${message}\n`);
@@ -13,7 +28,6 @@ function loadCredentials() {
     log($persistentStore.read("sfacg_data"));
     const headers = {
         "accept": sfacgData.accept,
-        // "contentType": sfacgData.contentType,
         "cookie": sfacgData.cookie,
         "sfsecurity": sfacgData.sfSecurity,
         "authorization": sfacgData.authorization,
@@ -78,21 +92,39 @@ function handleSignResult(error, response, data) {
                     rewardText += `${reward.num}${reward.name}`
                 });
                 getCoupon(function(result){
-                log(`getCoupon回调函数执行，结果: ${result.coupons}`);
-                notify(`签到成功,获得奖励:${rewardText}`, `剩余有效代券:${result.coupons},最近过期:${result.expireCoupons}代券(${result.expirationTime})`);
+                    log(`getCoupon回调函数执行，结果: ${result.coupons}`);
+                    if(result.expDate === result.today){
+                      notify(`签到成功,获得奖励:${rewardText}`, `⚠️⚠️⚠️剩余有效代券:${result.coupons},今日${result.expTime}过期:${result.expCoupons}代券`);
+                    }else{
+                    notify(`签到成功,获得奖励:${rewardText}`, `剩余有效代券:${result.coupons},最近过期:${result.expCoupons}代券(Date:${result.expDate})`);
+                    }
+
+                    $done({});
+
                 });
-            }// else{
-            //     notify("签到成功", "无奖励");
-            // }
+
+                return;
+            }else{
+                notify("签到成功", "无奖励");
+                $done({});
+            }
+
         }else if(result.status && result.status.httpCode === 400){
             const errorMsg = result.status ? result.status.msg : "未知错误";
-            log(`今日已签到 Info:${errorMsg}`);
-            
+            if(new Date().getHours() <1){
+                log(`签到系统维护， Info:${result.status.msg}`);
+                notify(`签到系统很可能在维护`,`Info:${errorMsg}`);
+                $done({});
+            }
+
             log(`准备调用getCoupon函数查询代券`);
             getCoupon(function(result){
                 log(`getCoupon回调函数执行，结果: ${result.coupons}`);
-                notify(`今日已经签到过了,剩余有效代券:${result.coupons}`,`最近过期:${result.expireCoupons}代券(${result.expirationTime})`);
-
+                if(result.expDate === result.today){
+                    notify(`今日已经签到过了，剩余有效代券:${result.Coupons}`,`⚠️⚠️⚠️今日${result.expTime}过期:${result.expCoupons}代券(Date:${result.expDate})`);
+                }else{
+                    notify(`今日已经签到过了,剩余有效代券:${result.coupons}`,`最近过期:${result.expCoupons}代券(Date:${result.expDate})`);
+                }
                 $done({});
             });
 
@@ -109,9 +141,9 @@ function handleSignResult(error, response, data) {
     }catch (e) {
         log(`解析响应出错: ${e}`);
         notify("处理签到响应出错", e.message);
+        $done({});
     }
 
-    $done({});
 }
 
 // 获取有效代券
@@ -166,7 +198,7 @@ function getCoupon(callback){
                 }
 
                 let coupons = 0;
-                let expirationTime = "";
+                let expirationDate = "";
                 let expireCoupons = 0;
                 for (let i = 0; i < result.length; i++) {
                     const coupon = result[i];
@@ -174,17 +206,19 @@ function getCoupon(callback){
                         break;
                     }
                     coupons += (coupon.coupon - coupon.usedCoupon);
-                    expirationTime = coupon.expireDate.replace("T", " ");
+                    expirationDate = coupon.expireDate.replace("T", " ");
                     expireCoupons += (coupon.coupon - coupon.usedCoupon);
                 }
 
 
                 log(`剩余有效代券: ${coupons}`);
-                log(`最近的代券过期日期: ${expirationTime}`);
+                log(`最近的代券过期日期: ${expirationDate}`);
                 callback({
                     coupons: coupons,
-                    expirationTime: expirationTime,
-                    expireCoupons: expireCoupons
+                    expDate: expirationDate.split(" ")[0],
+                    expTime: expirationDate.split(" ")[1],
+                    today: getSignDate().signDate,
+                    expCoupons: expireCoupons
                 });
                 
             }catch(e){

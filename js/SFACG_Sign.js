@@ -1,3 +1,4 @@
+// Date:2025-03-29 13:38:10
 // 日志函数
 function log(message) {
     console.log(`[日志] ${message}\n`);

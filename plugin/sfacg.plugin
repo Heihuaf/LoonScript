@@ -8,7 +8,7 @@
 #!tag = 签到
 
 [script]
-cron "30 9/21 * * *" script-path=https://raw.githubusercontent.com/Heihuaf/LoonScript/refs/heads/main/js/SFACG_Sign.js, tag=菠萝包每日签到
+cron "30 9,21 * * *" script-path=https://raw.githubusercontent.com/Heihuaf/LoonScript/refs/heads/main/js/SFACG_Sign.js, tag=菠萝包每日签到
 
 http-request ^https?:\/\/api\.sfacg\.com\/user\/sign\/continueDay script-path=https://raw.githubusercontent.com/Heihuaf/LoonScript/refs/heads/main/js/SFACG_Cookie.js, tag=菠萝包获取Cookie
 

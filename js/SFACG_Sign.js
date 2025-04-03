@@ -15,7 +15,7 @@
  */
 
 // 日志函数
-function log(message) {
+function log(message, title) {
     console.log(`[${title ? title : ""}日志] ${message}\n`);
 }
 // 通知函数

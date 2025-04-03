@@ -16,11 +16,11 @@
 
 // 日志函数
 function log(message, title) {
-    console.log(`[${title ? title : ""}日志] ${message}\n`);
+    console.log(`[${title ? title : "日志"}] ${message}\n`);
 }
 // 通知函数
 function notify(title, message) {
-    $notification.post("[菠萝包轻小说签到]", title, message);
+    $notification.post("菠萝包轻小说签到", title, message);
 }
 // 读取必要信息
 function loadCredentials() {
@@ -66,7 +66,7 @@ function prepareRequest(){
 // 获取有效代券
 function getCoupon(callback){
     try{
-        log("开始获取代券数量");
+        log("开始获取代券数量", "getCoupon");
         const sfacgData = JSON.parse($persistentStore.read("sfacg_data"));
 
         log("读取到数据: " + $persistentStore.read("sfacg_data").substring(0, 50) + "...");
@@ -77,7 +77,7 @@ function getCoupon(callback){
             "user-agent": `${sfacgData.userAgent}`
         };
 
-        log("构建请求头", "getCoupon()");
+        log("构建请求头");
 
         const request = {
             url: "https://api.sfacg.com/user/coupons",
@@ -130,6 +130,7 @@ function getCoupon(callback){
 
                 log(`剩余有效代券: ${coupons}`);
                 log(`最近的代券过期日期: ${expirationDate}`);
+                log("结束", "getCoupon")
                 callback({
                     coupons: coupons,
                     expDate: expirationDate.split(" ")[0],
@@ -140,11 +141,13 @@ function getCoupon(callback){
                 
             }catch(e){
                 log(`代券回调处理出错: ${e.message}`);
+                log("结束", "getCoupon")
                 callback("处理出错");
             }
         });
     }catch(e){
         log(`代券函数执行出错 ${e.message}`);
+        log("结束", "getCoupon")
         callback("函数错误");
     }
     
@@ -178,7 +181,7 @@ function handleSignResult(error, response, data) {
                     rewardText += `${reward.num}${reward.name}`
                 });
                 getCoupon(function(result){
-                    log(`getCoupon回调函数执行，结果: ${result.coupons}`);
+                    log(`getCoupon回调函数执行，结果: ${result.coupons}`, "getCoupon");
                     if(result.expDate === result.today){
                         log(`过期日期:${result.expDate}，今日日期:${result.today}`);
                         log(`result:${JSON.stringify(result)}`);
@@ -210,7 +213,7 @@ function handleSignResult(error, response, data) {
 
             log(`准备调用getCoupon函数查询代券`);
             getCoupon(function(result){
-                log(`getCoupon回调函数执行，结果: ${result.coupons}`);
+                log(`getCoupon回调函数执行，结果: ${result.coupons}`, "getCoupon");
                 if(result.expDate === result.today){
                     log(`过期日期:${result.expDate}，今日日期:${result.today}`);
                     log(`result:${JSON.stringify(result)}`);

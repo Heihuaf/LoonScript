@@ -63,89 +63,6 @@ function prepareRequest(){
     };
 }
 
-
-// 处理结果函数
-function handleSignResult(error, response, data) {
-    if (error) {
-        log(`签到请求失败: ${error}`);
-        notify("签到请求失败", error);
-        $done({});
-        return;
-    }
-
-    // log(`error:${error}`);
-    // log(`response: ${JSON.stringify(response)}`);
-    // log(`data:${data}`);
-
-    log(`签到响应: ${data}`);
-
-    try{
-        const result = JSON.parse(data);
-
-        // 状态判断
-        if (result.status && result.status.httpCode === 200) {
-            const rewards = result.data;
-            let rewardText = "";
-
-            if (rewards && rewards.length > 0) {
-                rewards.forEach(reward => {
-                    rewardText += `${reward.num}${reward.name}`
-                });
-                getCoupon(function(result){
-                    log(`getCoupon回调函数执行，结果: ${result.coupons}`);
-                    if(result.expDate === result.today){
-                      notify(`签到成功,获得奖励:${rewardText}`, `剩余有效代券:${result.coupons}\n⚠️⚠️⚠️今日${result.expTime}过期:${result.expCoupons}代券`);
-                    }else{
-                    notify(`签到成功,获得奖励:${rewardText}`, `剩余有效代券:${result.coupons}\n最近过期:${result.expCoupons}代券(Date:${result.expDate})`);
-                    }
-
-                    $done({});
-
-                });
-
-                return;
-            }else{
-                notify("签到成功", "无奖励");
-                $done({});
-            }
-
-        }else if(result.status && result.status.httpCode === 400){
-            const errorMsg = result.status ? result.status.msg : "未知错误";
-            if(new Date().getHours() <1){
-                log(`签到系统维护， Info:${result.status.msg}`);
-                notify(`签到系统很可能在维护`,`Info:${errorMsg}`);
-                $done({});
-            }
-
-            log(`准备调用getCoupon函数查询代券`);
-            getCoupon(function(result){
-                log(`getCoupon回调函数执行，结果: ${result.coupons}`);
-                if(result.expDate === result.today){
-                    notify(`今日已经签到过了，剩余有效代券:${result.Coupons}`,`⚠️⚠️⚠️今日${result.expTime}过期:${result.expCoupons}代券`);
-                }else{
-                    notify(`今日已经签到过了,剩余有效代券:${result.coupons}`,`最近过期:${result.expCoupons}代券(Date:${result.expDate})`);
-                }
-                $done({});
-            });
-
-            return;
-        }else{
-            const errorMsg = result.status ? result.status.msg : "未知错误";
-            notify("签到失败", errorMsg);
-            log(`签到失败 ${errorMsg}`);
-
-            $done({});
-        }
-        
-    
-    }catch (e) {
-        log(`解析响应出错: ${e}`);
-        notify("处理签到响应出错", e.message);
-        $done({});
-    }
-
-}
-
 // 获取有效代券
 function getCoupon(callback){
     try{
@@ -231,6 +148,88 @@ function getCoupon(callback){
         callback("函数错误");
     }
     
+}
+
+// 处理结果函数
+function handleSignResult(error, response, data) {
+    if (error) {
+        log(`签到请求失败: ${error}`);
+        notify("签到请求失败", error);
+        $done({});
+        return;
+    }
+
+    // log(`error:${error}`);
+    // log(`response: ${JSON.stringify(response)}`);
+    // log(`data:${data}`);
+
+    log(`签到响应: ${data}`);
+
+    try{
+        const result = JSON.parse(data);
+
+        // 状态判断
+        if (result.status && result.status.httpCode === 200) {
+            const rewards = result.data;
+            let rewardText = "";
+
+            if (rewards && rewards.length > 0) {
+                rewards.forEach(reward => {
+                    rewardText += `${reward.num}${reward.name}`
+                });
+                getCoupon(function(result){
+                    log(`getCoupon回调函数执行，结果: ${result.coupons}`);
+                    if(result.expDate === result.today){
+                      notify(`签到成功,获得奖励:${rewardText}`, `剩余有效代券:${result.coupons}\n⚠️⚠️⚠️今日${result.expTime}过期:${result.expCoupons}代券`);
+                    }else{
+                    notify(`签到成功,获得奖励:${rewardText}`, `剩余有效代券:${result.coupons}\n最近过期:${result.expCoupons}代券(Date:${result.expDate})`);
+                    }
+
+                    $done({});
+
+                });
+
+                return;
+            }else{
+                notify("签到成功", "无奖励");
+                $done({});
+            }
+
+        }else if(result.status && result.status.httpCode === 400){
+            const errorMsg = result.status ? result.status.msg : "未知错误";
+            if(new Date().getHours() <1){
+                log(`签到系统维护， Info:${result.status.msg}`);
+                notify(`签到系统很可能在维护`,`Info:${errorMsg}`);
+                $done({});
+            }
+
+            log(`准备调用getCoupon函数查询代券`);
+            getCoupon(function(result){
+                log(`getCoupon回调函数执行，结果: ${result.coupons}`);
+                if(result.expDate === result.today){
+                    notify(`今日已经签到过了，剩余有效代券:${result.Coupons}`,`⚠️⚠️⚠️今日${result.expTime}过期:${result.expCoupons}代券`);
+                }else{
+                    notify(`今日已经签到过了，剩余有效代券:${result.coupons}`,`最近过期:${result.expCoupons}代券(Date:${result.expDate})`);
+                }
+                $done({});
+            });
+
+            return;
+        }else{
+            const errorMsg = result.status ? result.status.msg : "未知错误";
+            notify("签到失败", errorMsg);
+            log(`签到失败 ${errorMsg}`);
+
+            $done({});
+        }
+        
+    
+    }catch (e) {
+        log(`解析响应出错: ${e}`);
+        notify("处理签到响应出错", e.message);
+        $done({});
+    }
+
 }
 
 // 主要请求函数

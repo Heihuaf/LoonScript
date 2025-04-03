@@ -16,7 +16,7 @@
 
 // 日志函数
 function log(message) {
-    console.log(`[日志] ${message}\n`);
+    console.log(`[${title ? title : ""}日志] ${message}\n`);
 }
 // 通知函数
 function notify(title, message) {
@@ -77,7 +77,7 @@ function getCoupon(callback){
             "user-agent": `${sfacgData.userAgent}`
         };
 
-        log("构建请求头");
+        log("getCoupon()","构建请求头");
 
         const request = {
             url: "https://api.sfacg.com/user/coupons",
@@ -181,11 +181,11 @@ function handleSignResult(error, response, data) {
                     log(`getCoupon回调函数执行，结果: ${result.coupons}`);
                     if(result.expDate === result.today){
                         log(`过期日期:${result.expDate}，今日日期:${result.today}`);
-                        log(`result:${result}`);
+                        log(`result:${JSON.Stringify(result)}`);
                         notify(`签到成功,获得奖励:${rewardText}`, `剩余有效代券:${result.coupons}\n⚠️⚠️⚠️今日${result.expTime}过期:${result.expCoupons}代券`);
                     }else{
                         log(`过期日期:${result.expDate}，今日日期:${result.today}`);
-                        log(`result:${result}`);
+                        log(`result:${JSON.Stringify(result)}`);
                         notify(`签到成功,获得奖励:${rewardText}`, `剩余有效代券:${result.coupons}\n最近过期:${result.expCoupons}代券(Date:${result.expDate})`);
                     }
 
@@ -213,11 +213,11 @@ function handleSignResult(error, response, data) {
                 log(`getCoupon回调函数执行，结果: ${result.coupons}`);
                 if(result.expDate === result.today){
                     log(`过期日期:${result.expDate}，今日日期:${result.today}`);
-                    log(`result:${result}`);
-                    notify(`今日已经签到过了，剩余有效代券:${result.Coupons}`,`⚠️⚠️⚠️今日${result.expTime}过期:${result.expCoupons}代券`);
+                    log(`result:${JSON.Stringify(result)}`);
+                    notify(`今日已经签到过了，剩余有效代券:${result.coupons}`,`⚠️⚠️⚠️今日${result.expTime}过期:${result.expCoupons}代券`);
                 }else{
                     log(`过期日期:${result.expDate}，今日日期:${result.today}`);
-                    log(`result:${result}`);
+                    log(`result:${JSON.Stringify(result)}`);
                     notify(`今日已经签到过了，剩余有效代券:${result.coupons}`,`最近过期:${result.expCoupons}代券(Date:${result.expDate})`);
                 }
                 $done({});

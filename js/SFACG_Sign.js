@@ -77,7 +77,7 @@ function getCoupon(callback){
             "user-agent": `${sfacgData.userAgent}`
         };
 
-        log("getCoupon()","构建请求头");
+        log("构建请求头", "getCoupon()");
 
         const request = {
             url: "https://api.sfacg.com/user/coupons",
